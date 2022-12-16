@@ -1,40 +1,53 @@
 import { createRef, useState } from 'react'
 
 function App() {
-    const [img, setImg] = useState<string>()
-    const inputRef = createRef<HTMLInputElement>()
+    interface User {
+        url: string
+        name: string
+        pfpUrl: string | undefined
+    }
+    type Users = { [key: string]: User }
 
-    const getScreenshot = (url: string) => {
+    const inputRef = createRef<HTMLInputElement>()
+    const [users, setUsers] = useState<Users>()
+
+    const followers = (url: string) => {
         fetch(
-            'http://localhost:3030/screenshot?' +
+            'http://localhost:3030/followers?' +
                 new URLSearchParams({ url: url })
-        )
-            .then(async (res) => {
-                const data = await res.text()
-                setImg(data)
-            })
-            .catch((err) => console.log(err))
+        ).then((res) => {
+            res.text().then((x) => setUsers(JSON.parse(x)))
+        })
     }
 
     return (
-        <div>
+        <>
             <div style={{ display: 'flex' }}>
-                <p>https://www.</p>
-                <input type="text" ref={inputRef} />
+                <input
+                    type="text"
+                    placeholder="https://open.spotify.com/user/..."
+                    ref={inputRef}
+                />
             </div>
-
             <button
                 onClick={() =>
                     inputRef.current?.value != undefined &&
-                    getScreenshot(`https://www.${inputRef.current?.value}`)
+                    followers(inputRef.current.value)
                 }
             >
-                Get Screenshot
+                Get Followers
             </button>
-            <div>
-                <img src={img} />
-            </div>
-        </div>
+            {users !== undefined &&
+                Object.keys(users).map((key) => (
+                    <li>
+                        <p>Name: {users[key]['name']}</p>
+                        <p>
+                            URL:{' '}
+                            <a href={users[key]['url']}>{users[key]['url']}</a>
+                        </p>
+                    </li>
+                ))}
+        </>
     )
 }
 

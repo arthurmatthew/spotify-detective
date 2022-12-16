@@ -2,6 +2,8 @@ import express from 'express'
 import cors from 'cors'
 import puppeteer, { ElementHandle, Page } from 'puppeteer'
 
+// TODO comment code + refactor to make it more clear (also on App.tsx)
+
 const app = express()
 const PORT = 3030
 

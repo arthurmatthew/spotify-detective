@@ -1,6 +1,16 @@
 import { createRef, MouseEventHandler, useState } from 'react'
 import './App.css'
 
+/*
+TODO rework the front end
+
+Try to focus on working on a system where the data is stored
+in the front end, and more children are added to this data
+
+Just focus on React front end later, data needs to be correct
+before it can be visualized
+*/
+
 class User {
     url: string
     name: string

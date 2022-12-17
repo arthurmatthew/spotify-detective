@@ -1,0 +1,32 @@
+#page {
+    width: 100vw;
+    min-height: 100vh;
+}
+
+header {
+    height: 100px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+main {
+    background-color: lightgray;
+    height: 500px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#frame {
+    height: 100%;
+    aspect-ratio: 1 / 1;
+    background-color: gray;
+}
+
+footer {
+    height: 100px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}

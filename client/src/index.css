@@ -5,3 +5,10 @@
     -moz-osx-font-smoothing: grayscale;
     -webkit-text-size-adjust: 100%;
 }
+
+body {
+    outline: 0;
+    border: 0;
+    margin: 0;
+    padding: 0;
+}

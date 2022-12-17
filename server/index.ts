@@ -13,10 +13,17 @@ class User {
     url: string
     name: string
     pfpUrl: string | undefined
-    constructor(url: string, name: string, pfpUrl: string | undefined) {
+    children: Object | undefined
+    constructor(
+        url: string,
+        name: string,
+        pfpUrl: string | undefined,
+        children: Object | undefined
+    ) {
         this.url = url
         this.name = name
         this.pfpUrl = pfpUrl
+        this.children = children
     }
 }
 
@@ -59,7 +66,8 @@ const followers = async (url: string) => {
             let follower = followers[i]
             let data = await follower.$(':scope > *')
 
-            let pfpUrl: string
+            let pfpUrl: string | undefined = undefined
+            let children = {}
             let name = await data
                 ?.$(':scope > * a')
                 .then(async (x) => await x?.getProperty('title'))
@@ -69,7 +77,7 @@ const followers = async (url: string) => {
                 .then(async (x) => await x?.getProperty('href'))
                 .then(async (x) => await x?.toString().slice(9)) // Slice 9 to remove JSHandle:<url> prefix
             if (url !== undefined && name !== undefined)
-                users[i.toString()] = new User(url, name, undefined)
+                users[i.toString()] = new User(url, name, pfpUrl, children)
         }
     }
     await browser.close()
@@ -81,6 +89,7 @@ app.get('/followers', (req, res) => {
     const url = (req.query.url as string).split('?')[0] + '/followers'
     followers(url).then((users: Object) => {
         res.json(users)
+        console.log('Sent')
     })
 })
 

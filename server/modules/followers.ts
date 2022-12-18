@@ -13,7 +13,12 @@ const followers = async (profileUrl: string) => {
     const browser = await puppeteer.launch({ headless: true })
     const page = await browser.newPage()
 
-    await page.goto(url, { waitUntil: 'networkidle0' })
+    try {
+        await page.goto(url, { waitUntil: 'networkidle0' })
+    } catch (err) {
+        console.log(err)
+        return [new User('', '', [], '')]
+    }
 
     let followers = await findFollowers(page)
     if (followers !== false)
@@ -29,7 +34,9 @@ const followers = async (profileUrl: string) => {
                 x?.slice(9)
             )
             if (url !== undefined && name !== undefined)
-                users.push(new User(url, name, pfpUrl, {}))
+                users.push(
+                    new User(url, name, [], pfpUrl === undefined ? '' : pfpUrl)
+                )
         }
 
     await browser.close()

@@ -10,9 +10,13 @@ const followers = async (profileUrl: string) => {
 
     let users: Array<User> = new Array()
 
+    console.log('Opening browser...')
     const browser = await puppeteer.launch({ headless: true })
+
+    console.log('Creating page...')
     const page = await browser.newPage()
 
+    console.log('Visiting site...')
     try {
         await page.goto(url, { waitUntil: 'networkidle0' })
     } catch (err) {
@@ -20,8 +24,11 @@ const followers = async (profileUrl: string) => {
         return [new User('error', '', '')]
     }
 
+    console.log('Searching for followers in DOM...')
     let followers = await findFollowers(page)
-    if (followers !== false)
+    if (followers !== false) {
+        console.log(`Found ${followers.length} followers`)
+
         for (let i = 0; i < followers.length; i++) {
             let follower = followers[i]
             let data = await follower.$(':scope > *')
@@ -37,10 +44,12 @@ const followers = async (profileUrl: string) => {
                 users.push(
                     new User(url, name, pfpUrl === undefined ? '' : pfpUrl)
                 )
+            console.log(`[${i + 1}] Follower > User completed`)
         }
-
+    }
     await browser.close()
 
+    console.log(`Completed`)
     return users
 }
 

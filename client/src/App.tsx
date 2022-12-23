@@ -1,83 +1,15 @@
 import { createRef, useEffect, useState } from 'react'
 
-import defaultPicture from './assets/default.svg'
-
-class User {
-    url: string
-    name: string
-    pfpUrl: string
-    relevance: string
-    checked: boolean
-    constructor(
-        url: string,
-        name: string,
-        pfpUrl: string,
-        relevance: string,
-        checked: boolean
-    ) {
-        this.url = url
-        this.name = name
-        this.pfpUrl = pfpUrl
-        this.relevance = relevance
-        this.checked = checked
-    }
-}
+import User from './types/User'
+import {
+    getTestFollowers,
+    getFollowers,
+    toRelevanceModel,
+} from './utils/followers'
 
 const App = () => {
     const [users, setUsers] = useState<Array<User>>([])
     const inputRef = createRef<HTMLInputElement>()
-
-    const getFollowers = async (url: string) => {
-        const newUsers = await fetch(
-            'http://localhost:3000/followers?' +
-                new URLSearchParams({ url: url })
-        )
-        const json = await newUsers.json()
-
-        // Update checked property
-        const updatedUsers = [...json, ...users].map((user) => {
-            console.log(user)
-
-            if (user.url === url) {
-                console.log('updating checked', user)
-
-                return new User(
-                    user.url,
-                    user.name,
-                    user.pfpUrl,
-                    user.relevance,
-                    true
-                )
-            }
-            return user
-        })
-        setUsers(updatedUsers.filter((x: User) => !(x.url == 'error')))
-    }
-
-    const getTestFollowers = () => {
-        fetch('http://localhost:3000/test').then(async (x) => {
-            let users = await x.json()
-            setUsers((prevUsers) => [
-                ...(prevUsers as any[]),
-                ...users.filter((x: User) => !(x.url == 'error')),
-            ])
-        })
-    }
-
-    // Essentially removes duplicates from array and counts their occurrences and adds it as the relevance property
-    const toRelevanceModel = (users: Array<User>) => {
-        let result = users
-
-        let counts = users
-            .map((x) => x.url)
-            .reduce((acc, e) => acc.set(e, (acc.get(e) || 0) + 1), new Map())
-        // counts.values() = occurrences
-        // counts.keys() = users
-        result.map((x) => (x.relevance = counts.get(x.url))) // adds relevance property
-        return [...new Map(result.map((x) => [x.url, x])).values()].sort(
-            (a, b) => parseInt(b.relevance) - parseInt(a.relevance) // sort by relevance greatest to least
-        )
-    }
 
     return (
         <>
@@ -100,13 +32,18 @@ const App = () => {
                             getFollowers(
                                 inputRef.current != null
                                     ? inputRef.current.value
-                                    : ''
+                                    : '',
+                                users,
+                                setUsers
                             )
                         }
                     >
                         Get Followers
                     </button>
-                    <button className="" onClick={getTestFollowers}>
+                    <button
+                        className=""
+                        onClick={() => getTestFollowers(setUsers)}
+                    >
                         Test
                     </button>
                     <button className="" onClick={() => setUsers([])}>
@@ -122,7 +59,9 @@ const App = () => {
                                     {x.relevance} | <a href={x.url}>{x.name}</a>{' '}
                                     |{' '}
                                     <button
-                                        onClick={() => getFollowers(x.url)}
+                                        onClick={() =>
+                                            getFollowers(x.url, users, setUsers)
+                                        }
                                         disabled={x.checked}
                                     >
                                         Check

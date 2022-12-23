@@ -17,7 +17,7 @@ const followers = async (profileUrl: string) => {
         await page.goto(url, { waitUntil: 'networkidle0' })
     } catch (err) {
         console.log(err)
-        return [new User('', '', '')]
+        return [new User('error', '', '')]
     }
 
     let followers = await findFollowers(page)

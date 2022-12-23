@@ -2,6 +2,20 @@ import { createRef, useState } from 'react'
 
 import defaultPicture from './assets/default.svg'
 
+/*
+
+TODO Fix frontend!
+
+TODO Fix big issue with app
+
+The issue:
+We don't want to check the followers of users who have already been checked, otherwise
+relevancy count will be wrong 
+
+solution: add checked key to each user (this might work (maybe))
+
+*/
+
 class User {
     url: string
     name: string

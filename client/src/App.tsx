@@ -1,13 +1,6 @@
-import { createRef, useState } from 'react'
+import { createRef, useEffect, useState } from 'react'
 
 import defaultPicture from './assets/default.svg'
-
-/*
-
-TODO Make better frontend!
-! For some reason the users list is not updating when a new user is checked.
-
-*/
 
 class User {
     url: string
@@ -35,48 +28,18 @@ const App = () => {
     const inputRef = createRef<HTMLInputElement>()
 
     const getFollowers = async (url: string) => {
-        // let users = await fetch(
-        //     'http://localhost:3000/followers?' +
-        //         new URLSearchParams({ url: url })
-        // ).then(async (x) => {
-        //     let users = await x.json()
-        //     setUsers((prevUsers) => [
-        //         ...(prevUsers as any[]),
-        //         ...users.filter((x: User) => !(x.url == 'error')),
-        //     ])
-        // })
-
         const newUsers = await fetch(
             'http://localhost:3000/followers?' +
                 new URLSearchParams({ url: url })
         )
-        console.log('fetched users')
-
         const json = await newUsers.json()
-        console.log('got json', json)
 
-        setUsers((prevUsers) => [
-            ...(prevUsers as any[]),
-            ...json.filter((x: User) => !(x.url == 'error')),
-        ])
-        console.log('added new users', JSON.stringify(users))
-    }
+        // Update checked property
+        const updatedUsers = [...json, ...users].map((user) => {
+            console.log(user)
 
-    const getTestFollowers = () => {
-        fetch('http://localhost:3000/test').then(async (x) => {
-            let users = await x.json()
-            setUsers((prevUsers) => [
-                ...(prevUsers as any[]),
-                ...users.filter((x: User) => !(x.url == 'error')),
-            ])
-        })
-    }
-
-    const check = async (url: string) => {
-        // update checked value of user that was checked
-        const updatedUsers = users.map((user, i) => {
             if (user.url === url) {
-                console.log('updating checked')
+                console.log('updating checked', user)
 
                 return new User(
                     user.url,
@@ -88,8 +51,17 @@ const App = () => {
             }
             return user
         })
-        setUsers(updatedUsers)
-        console.log(JSON.stringify(users))
+        setUsers(updatedUsers.filter((x: User) => !(x.url == 'error')))
+    }
+
+    const getTestFollowers = () => {
+        fetch('http://localhost:3000/test').then(async (x) => {
+            let users = await x.json()
+            setUsers((prevUsers) => [
+                ...(prevUsers as any[]),
+                ...users.filter((x: User) => !(x.url == 'error')),
+            ])
+        })
     }
 
     // Essentially removes duplicates from array and counts their occurrences and adds it as the relevance property
@@ -150,11 +122,7 @@ const App = () => {
                                     {x.relevance} | <a href={x.url}>{x.name}</a>{' '}
                                     |{' '}
                                     <button
-                                        onClick={() =>
-                                            getFollowers(x.url).finally(() =>
-                                                check(x.url)
-                                            )
-                                        }
+                                        onClick={() => getFollowers(x.url)}
                                         disabled={x.checked}
                                     >
                                         Check

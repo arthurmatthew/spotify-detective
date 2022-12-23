@@ -1,31 +1,11 @@
 import User from './User'
 
 const data: Array<User> = [
-    {
-        name: 'Bob',
-        url: 'Bob',
-        pfpUrl: '',
-    },
-    {
-        name: 'Jim',
-        url: 'Jim',
-        pfpUrl: '',
-    },
-    {
-        name: 'Dave',
-        url: 'Dave',
-        pfpUrl: '',
-    },
-    {
-        name: 'Matt',
-        url: 'Matt',
-        pfpUrl: '',
-    },
-    {
-        name: 'Billy',
-        url: 'Billy',
-        pfpUrl: '',
-    },
+    new User('Bob', 'Bob', ''),
+    new User('Billy', 'Billy', ''),
+    new User('Matt', 'Matt', ''),
+    new User('Jeff', 'Jeff', ''),
+    new User('Walt', 'Walt', ''),
 ]
 
 const testData = async () => {

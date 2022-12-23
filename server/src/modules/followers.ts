@@ -50,7 +50,7 @@ const followers = async (profileUrl: string) => {
     try {
         await page.goto(url, { waitUntil: 'networkidle0' })
     } catch (err) {
-        console.log(err)
+        console.log('Invalid URL.')
         return [new User('error', '', '')]
     }
 

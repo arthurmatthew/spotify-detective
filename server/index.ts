@@ -5,18 +5,24 @@ import User from './modules/User'
 import testData from './modules/testData'
 
 const app = express()
-const PORT = 3030
+const PORT = 3000
 
 app.use(cors())
 
 app.get('/followers', (req, res) => {
-    followers(req.query.url as string).then((users: Array<User>) => {
-        res.json(users)
-    })
+    console.log('Request received')
+    followers(req.query.url as string)
+        .then((users: Array<User>) => {
+            res.json(users)
+        })
+        .finally(() => console.log('Data sent'))
 })
 
 app.get('/test', (req, res) => {
-    testData().then((users: Array<User>) => res.json(users))
+    console.log('Request received')
+    testData()
+        .then((users: Array<User>) => res.json(users))
+        .finally(() => console.log('Data sent'))
 })
 
 app.listen(PORT)

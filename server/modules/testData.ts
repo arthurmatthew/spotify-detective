@@ -4,25 +4,26 @@ const data: Array<User> = [
     {
         name: 'Bob',
         url: 'Bob',
-        children: [],
         pfpUrl: '',
     },
     {
         name: 'Jim',
         url: 'Jim',
-        children: [],
         pfpUrl: '',
     },
     {
         name: 'Dave',
         url: 'Dave',
-        children: [],
         pfpUrl: '',
     },
     {
         name: 'Matt',
         url: 'Matt',
-        children: [],
+        pfpUrl: '',
+    },
+    {
+        name: 'Billy',
+        url: 'Billy',
         pfpUrl: '',
     },
 ]

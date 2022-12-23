@@ -17,7 +17,7 @@ const followers = async (profileUrl: string) => {
         await page.goto(url, { waitUntil: 'networkidle0' })
     } catch (err) {
         console.log(err)
-        return [new User('', '', [], '')]
+        return [new User('', '', '')]
     }
 
     let followers = await findFollowers(page)
@@ -35,7 +35,7 @@ const followers = async (profileUrl: string) => {
             )
             if (url !== undefined && name !== undefined)
                 users.push(
-                    new User(url, name, [], pfpUrl === undefined ? '' : pfpUrl)
+                    new User(url, name, pfpUrl === undefined ? '' : pfpUrl)
                 )
         }
 

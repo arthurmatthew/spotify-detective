@@ -3,69 +3,67 @@ import { createRef, useState } from 'react'
 class User {
     url: string
     name: string
-    children: Array<User>
     pfpUrl: string
-    constructor(
-        url: string,
-        name: string,
-        children: Array<User>,
-        pfpUrl: string
-    ) {
+    relevance: string
+    constructor(url: string, name: string, pfpUrl: string, relevance: string) {
         this.url = url
         this.name = name
-        this.children = children
         this.pfpUrl = pfpUrl
+        this.relevance = relevance
     }
 }
 
-// TODO figure out how to find and edit nested object
-
 const App = () => {
-    const [users, setUsers] = useState<any>(undefined) // start as undefined, become array of User s
+    const [users, setUsers] = useState<Array<User>>([])
     const inputRef = createRef<HTMLInputElement>()
-
-    const initializeUsers = () => {
-        let url = inputRef.current?.value
-        url !== undefined && setUsers([new User(url, url, [], '')])
-    }
 
     const getFollowers = (url: string) => {
         fetch(
-            'http://localhost:3030/followers' +
+            'http://localhost:3000/followers?' +
                 new URLSearchParams({ url: url })
-        ).then((x) => console.log(x))
+        ).then(async (x) => {
+            let users = await x.json()
+            setUsers((prevUsers) => [...(prevUsers as any[]), ...users])
+        })
     }
 
     const getTestFollowers = () => {
-        fetch('http://localhost:3030/test').then((res) => setUsers(res.json()))
+        fetch('http://localhost:3000/test').then(async (x) => {
+            let users = await x.json()
+            setUsers((prevUsers) => [...(prevUsers as any[]), ...users])
+        })
+    }
+
+    // Essentially removes duplicates from array and counts their occurrences and adds it as the relevance property
+    const toRelevanceModel = (users: Array<User>) => {
+        let result = users
+
+        let counts = users
+            .map((x) => x.url)
+            .reduce((acc, e) => acc.set(e, (acc.get(e) || 0) + 1), new Map())
+        // counts.values() = occurrences
+        // counts.keys() = users
+        result.map((x) => (x.relevance = counts.get(x.url)))
+
+        // this does not preserve order
+        return [...new Map(result.map((x) => [x.url, x])).values()]
     }
 
     return (
         <div>
-            <ul>
-                <li>
-                    <input ref={inputRef} type="text"></input>
-                    <button onClick={() => initializeUsers()}>+</button>
-                </li>
-                {users !== undefined && <List users={users} />}
-            </ul>
+            <input type="text" ref={inputRef} />
+            <button
+                onClick={() =>
+                    getFollowers(
+                        inputRef.current != null ? inputRef.current.value : ''
+                    )
+                }
+            >
+                Get Followers
+            </button>
+            <button onClick={getTestFollowers}>Test</button>
+            <p>{JSON.stringify(toRelevanceModel(users))}</p>
         </div>
-    )
-}
-
-const List = ({ users }: { users: Array<User> | undefined }) => {
-    return (
-        <ul>
-            {users?.map((user) => (
-                <li key={user.name}>
-                    <div>
-                        {user.name}
-                        <button>+</button>
-                    </div>
-                    <List users={user.children} />
-                </li>
-            ))}
-        </ul>
     )
 }
 

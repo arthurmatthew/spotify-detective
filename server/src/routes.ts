@@ -1,15 +1,15 @@
 import express from 'express'
-import cors from 'cors'
 import followers from './modules/followers'
-import User from './modules/User'
 import testData from './modules/testData'
+import User from './types/User'
 
-const app = express()
-const PORT = 3000
+const router = express.Router()
 
-app.use(cors())
+router.get('/status', (req, res) => {
+    res.send('OK')
+})
 
-app.get('/followers', (req, res) => {
+router.get('/followers', (req, res) => {
     console.log('Request received')
     let start = performance.now()
     followers(req.query.url as string)
@@ -25,7 +25,7 @@ app.get('/followers', (req, res) => {
         )
 })
 
-app.get('/test', (req, res) => {
+router.get('/test', (req, res) => {
     console.log('Request received')
     let start = performance.now()
     testData()
@@ -39,4 +39,4 @@ app.get('/test', (req, res) => {
         )
 })
 
-app.listen(PORT)
+module.exports = router

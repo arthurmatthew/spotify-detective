@@ -1,9 +1,39 @@
-import puppeteer from 'puppeteer'
-import findFollowers from './followers/findFollowers'
-import findName from './followers/findName'
-import findPfpUrl from './followers/findPfpUrl'
-import findUrl from './followers/findUrl'
-import User from './User'
+import puppeteer, { ElementHandle, Page } from 'puppeteer'
+import User from '../types/User'
+
+const findFollowers = async (page: Page) => {
+    return await page
+        ?.$('section[aria-label="Followers"]') // Find parent
+        .then(
+            async (
+                x // Take the parent
+            ) =>
+                x !== null && // Satisfy TypeScript
+                (await x
+                    .$('div[style]') // Find child div of parent
+                    .then(
+                        async (x) => x !== null && (await x.$$(':scope > *')) // Get all children of child
+                    ))
+        )
+}
+
+const findName = async (data: ElementHandle<Element> | null) => {
+    return await data
+        ?.$(':scope > * a')
+        .then(async (x) => await x?.getProperty('title'))
+        .then(async (x) => await x?.toString())
+}
+
+const findPfpUrl = async (data: ElementHandle<Element> | null) => {
+    return undefined // TODO add functionality
+}
+
+const findUrl = async (data: ElementHandle<Element> | null) => {
+    return await data
+        ?.$(':scope > * a')
+        .then(async (x) => await x?.getProperty('href'))
+        .then(async (x) => await x?.toString())
+}
 
 const followers = async (profileUrl: string) => {
     let url = profileUrl + '/followers'

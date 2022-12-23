@@ -1,4 +1,4 @@
-import User from './User'
+import User from '../types/User'
 
 const data: Array<User> = [
     new User('Bob', 'Bob', ''),

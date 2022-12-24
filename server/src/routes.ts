@@ -12,7 +12,25 @@ router.get('/status', (req, res) => {
 router.get('/followers', (req, res) => {
     console.log('Request received')
     let start = performance.now()
-    followers(req.query.url as string)
+    followers
+        .followers(req.query.url as string)
+        .then((users: Array<User>) => {
+            res.json(users)
+        })
+        .finally(() =>
+            console.log(
+                `Data sent in ${Math.floor(
+                    (performance.now() - start) / 1000
+                )} seconds`
+            )
+        )
+})
+
+router.get('/followers/multi', (req, res) => {
+    console.log('Request received')
+    let start = performance.now()
+    followers
+        .followersMulti(JSON.parse(req.query.url as string))
         .then((users: Array<User>) => {
             res.json(users)
         })
@@ -29,7 +47,10 @@ router.get('/test', (req, res) => {
     console.log('Request received')
     let start = performance.now()
     testData()
-        .then((users: Array<User>) => res.json(users))
+        .then(async (users: Array<User>) => {
+            await new Promise((resolve) => setTimeout(resolve, 1000))
+            res.json(users)
+        })
         .finally(() =>
             console.log(
                 `Data sent in ${Math.floor(

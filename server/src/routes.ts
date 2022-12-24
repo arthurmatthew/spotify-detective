@@ -29,35 +29,43 @@ router.get('/followers', (req, res) => {
 router.get('/followers/multi', (req, res) => {
     console.log('Request received')
     let start = performance.now()
-    followers
-        .followersMulti(JSON.parse(req.query.url as string))
-        .then((users: Array<User>) => {
-            res.json(users)
-        })
-        .finally(() =>
-            console.log(
-                `Data sent in ${Math.floor(
-                    (performance.now() - start) / 1000
-                )} seconds`
+    try {
+        followers
+            .followersMulti(JSON.parse(req.query.url as string))
+            .then((users: Array<User>) => {
+                res.json(users)
+            })
+            .finally(() =>
+                console.log(
+                    `Data sent in ${Math.floor(
+                        (performance.now() - start) / 1000
+                    )} seconds`
+                )
             )
-        )
+    } catch (error) {
+        console.log(error)
+    }
 })
 
 router.get('/test', (req, res) => {
     console.log('Request received')
     let start = performance.now()
-    testData()
-        .then(async (users: Array<User>) => {
-            await new Promise((resolve) => setTimeout(resolve, 1000))
-            res.json(users)
-        })
-        .finally(() =>
-            console.log(
-                `Data sent in ${Math.floor(
-                    (performance.now() - start) / 1000
-                )} seconds`
+    try {
+        testData()
+            .then(async (users: Array<User>) => {
+                await new Promise((resolve) => setTimeout(resolve, 1000))
+                res.json(users)
+            })
+            .finally(() =>
+                console.log(
+                    `Data sent in ${Math.floor(
+                        (performance.now() - start) / 1000
+                    )} seconds`
+                )
             )
-        )
+    } catch (error) {
+        console.log(error)
+    }
 })
 
 module.exports = router

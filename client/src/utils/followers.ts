@@ -13,11 +13,7 @@ export const getFollowers = async (
 
     // Update checked property
     const updatedUsers = [...json, ...users].map((user) => {
-        console.log(user)
-
         if (user.url === url) {
-            console.log('updating checked', user)
-
             return new User(
                 user.url,
                 user.name,
@@ -29,6 +25,36 @@ export const getFollowers = async (
         return user
     })
     setUsers(updatedUsers.filter((x: User) => !(x.url == 'error')))
+}
+
+export const getFollowersMulti = async (
+    users: Array<User>,
+    setUsers: (value: React.SetStateAction<User[]>) => void
+) => {
+    let stateCopy: Array<User> = users
+
+    const newUsers = await fetch(
+        'http://localhost:3000/followers/multi?' +
+            new URLSearchParams({
+                url: JSON.stringify(
+                    [
+                        ...new Set(
+                            users.filter((x) => !x.checked).map((x) => x.url)
+                        ),
+                    ] // purpose of set is to remove duplicates
+                ),
+            })
+    )
+
+    stateCopy = stateCopy.map(
+        (x) => new User(x.url, x.name, x.pfpUrl, x.relevance, true)
+    )
+
+    const json = await newUsers.json() // array of all followers of every user in array
+
+    stateCopy = [...stateCopy, ...json].filter((x: User) => !(x.url == 'error'))
+
+    setUsers(stateCopy)
 }
 
 export const getTestFollowers = (
@@ -52,7 +78,34 @@ export const toRelevanceModel = (users: Array<User>) => {
     // counts.values() = occurrences
     // counts.keys() = users
     result.map((x) => (x.relevance = counts.get(x.url))) // adds relevance property
-    return [...new Map(result.map((x) => [x.url, x])).values()].sort(
+
+    let unique = new Map()
+    for (let user of result) {
+        if (
+            unique.get(user.url) == false ||
+            unique.get(user.url) == undefined
+        ) {
+            unique.set(user.url, user.checked)
+        }
+    }
+
+    // this code essentially removes duplicates, preferring the duplicate with a checked of true
+    return [
+        ...new Map(
+            result
+                .map(
+                    (x) =>
+                        new User(
+                            x.url,
+                            x.name,
+                            x.pfpUrl,
+                            x.relevance,
+                            unique.get(x.url)
+                        )
+                )
+                .map((x) => [x.url, x])
+        ).values(),
+    ].sort(
         (a, b) => parseInt(b.relevance) - parseInt(a.relevance) // sort by relevance greatest to least
     )
 }

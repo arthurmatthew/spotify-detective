@@ -1,22 +1,8 @@
 import { createRef, useState } from 'react'
 import User from './types/User'
 
-/*
-
-! ISSUES TO FIX
-
-For some reason it is not checking people when multi, maybe check first
-Nevermind its fixed! Solution: there was no system in place to
-remove duplicates while preferring the duplicate with the true value
-in the toRelevanceModel function. i never made one because the getFollowers
-function made it so there were never any duplicates with varying 
-checked values.
-
-*/
-
 import {
     getFollowers,
-    getFollowersMulti,
     getTestFollowers,
     toRelevanceModel,
 } from './utils/followers'
@@ -27,12 +13,18 @@ const App = () => {
     const inputRef = createRef<HTMLInputElement>()
     const timesRef = createRef<HTMLInputElement>()
 
+    /**
+     * Gets the followers of every user currently in the state x amount of times
+     * @param {number} times - Amount of times to loop
+     */
     const automate = async (times: number) => {
+        let newUsers: Array<User> = users
         for (let i = 0; i < times; i++) {
             console.log(`Job ${i}`)
-            await getFollowersMulti(users, setUsers)
+            newUsers = await getFollowers(newUsers)
             console.log(`Job ${i} done`)
         }
+        setUsers(newUsers)
     }
 
     return (
@@ -72,13 +64,14 @@ const App = () => {
                                 </label>
                                 <button
                                     className="w-full flex-1 border-stone-500 border-solid border-[1px] rounded-md shadow-inner shadow-stone-300 disabled:text-stone-200"
-                                    onClick={() =>
-                                        getFollowers(
-                                            inputRef.current != null
-                                                ? inputRef.current.value
-                                                : '',
-                                            users,
-                                            setUsers
+                                    onClick={async () =>
+                                        setUsers(
+                                            await getFollowers(
+                                                users,
+                                                inputRef.current != null
+                                                    ? inputRef.current.value
+                                                    : ''
+                                            )
                                         )
                                     }
                                     disabled={users.length > 0}
@@ -87,7 +80,9 @@ const App = () => {
                                 </button>
                                 <button
                                     className="w-full flex-1 border-stone-500 border-solid border-[1px] rounded-md shadow-inner shadow-stone-300"
-                                    onClick={() => getTestFollowers(setUsers)}
+                                    onClick={async () =>
+                                        setUsers(await getTestFollowers())
+                                    }
                                 >
                                     Get Test Data
                                 </button>
@@ -164,7 +159,7 @@ const UserDisplay = ({
     pfp,
 }: {
     users: Array<User>
-    setUsers: (value: React.SetStateAction<User[]>) => void
+    setUsers: (array: React.SetStateAction<User[]>) => void
     name: string
     url: string
     relevance: string
@@ -186,7 +181,9 @@ const UserDisplay = ({
                 <button
                     className="bg-stone-100 border-[1px] border-stone-200 shadow-inner border-solid rounded-md py-4 disabled:text-stone-200"
                     disabled={checked}
-                    onClick={() => getFollowers(url, users, setUsers)}
+                    onClick={async () =>
+                        setUsers(await getFollowers(users, url))
+                    }
                 >
                     Get Followers
                 </button>

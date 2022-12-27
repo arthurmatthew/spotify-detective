@@ -1,12 +1,17 @@
 {
     "name": "spotify-detective",
     "version": "1.0.0",
-    "description": "",
-    "main": "index.js",
+    "description": "Find people you might know on Spotify.",
+    "private": "true",
+    "scripts": {
+        "start": "concurrently \"npm --prefix ./client run dev\" \"npm --prefix ./server run start\"",
+        "dev": "concurrently \"npm --prefix ./client run dev\" \"npm --prefix ./server run dev\""
+    },
     "keywords": [],
     "author": "",
     "license": "ISC",
     "devDependencies": {
+        "concurrently": "^7.6.0",
         "prettier": "2.8.1"
     }
 }

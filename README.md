@@ -5,7 +5,7 @@
   <img src="https://user-images.githubusercontent.com/89240346/209046743-466eccb9-d3de-48ad-8a28-76f2e956e43b.png" width="200" height="200">
 </div>-->
 <p align="center">
-  My personal website built with React + TailwindCSS and deployed on Netlify
+  Find your friends on Spotify
 </p>
 <p align="center">
   <img src="https://img.shields.io/github/issues/arthurmatthew/spotify-detective" alt="Open Issues">

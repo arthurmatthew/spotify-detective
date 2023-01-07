@@ -22,10 +22,14 @@
 Spotify Detective is a tool that helps you find the accounts of people you may know.
 
 ## Stack ⚙
+
 ### Frontend 💻
+
 - [React](https://reactjs.org/)
 - [TailwindCSS](www.tailwindcss.com)
+
 ### Backend 🌐
+
 - [Node.js](www.nodejs.org)
   - [express.js](www.expressjs.com)
   - [Puppeteer](www.pptr.dev)

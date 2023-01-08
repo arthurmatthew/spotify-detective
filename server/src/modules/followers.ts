@@ -34,7 +34,10 @@ const findProfileName = async (url: string) => {
 }
 
 const findPfpUrl = async (data: ElementHandle<Element> | null) => {
-  return undefined // TODO add functionality
+  return await data
+    ?.$(':scope > * img')
+    .then(async (x) => await x?.getProperty('src'))
+    .then(async (x) => await x?.toString())
 }
 
 const findUrl = async (data: ElementHandle<Element> | null) => {
@@ -57,7 +60,7 @@ const followers = async (profileUrl: string) => {
 
   console.log('Visiting site...')
   try {
-    await page.goto(url, { waitUntil: 'networkidle0' }) // change this to wait for the followers element, maybe makes it faster
+    await page.goto(url, { waitUntil: 'networkidle0' }) // TODO change this to wait for the followers element, maybe makes it faster
   } catch (err) {
     console.log('Invalid URL.')
     return [new User('error', '', '')]
@@ -72,7 +75,9 @@ const followers = async (profileUrl: string) => {
       let follower = followers[i]
       let data = await follower.$(':scope > *')
 
-      let pfpUrl: string | undefined = await findPfpUrl(data)
+      let pfpUrl: string | undefined = await findPfpUrl(data).then((x) =>
+        x?.slice(9)
+      )
       let name: string | undefined = await findName(data).then((x) =>
         x?.slice(9)
       ) // Slice 9 to remove JSHandle: text
@@ -123,7 +128,9 @@ const followersMulti = async (profileUrls: Array<string>) => {
         let follower = followers[i]
         let data = await follower.$(':scope > *')
 
-        let pfpUrl: string | undefined = await findPfpUrl(data)
+        let pfpUrl: string | undefined = await findPfpUrl(data).then((x) =>
+          x?.slice(9)
+        )
         let name: string | undefined = await findName(data).then((x) =>
           x?.slice(9)
         ) // Slice 9 to remove JSHandle: text

@@ -112,36 +112,51 @@ const App = () => {
             Fetch data to get started.
           </h1>
         ) : (
-          <table className="w-screen table-fixed border-separate border-spacing-2 bg-stone-100">
+          <table className="w-screen table-fixed border-separate border-spacing-2">
             <thead>
               <tr className="lowercase">
-                <th className="border border-solid border-stone-300 px-2 text-xl font-normal">
+                <th className="border border-solid border-stone-700 bg-stone-700 px-2 text-xl font-normal"></th>
+                <th className="border border-solid border-stone-700 px-2 text-xl font-normal">
                   Name
                 </th>
-                <th className="border border-solid border-stone-300 px-2 text-xl font-normal">
+                <th className="border border-solid border-stone-700 px-2 text-xl font-normal">
                   Relevance
                 </th>
-                <th className="border border-solid border-stone-300 px-2 text-xl font-normal">
+                <th className="border border-solid border-stone-700 px-2 text-xl font-normal">
                   Follower Of
                 </th>
-                <th className="border border-solid border-stone-300 px-2 text-xl font-normal">
+                <th className="border border-solid border-stone-700 px-2 text-xl font-normal">
                   Checked
                 </th>
-                <th className="border border-solid border-stone-300 bg-stone-300 px-2 text-xl font-normal"></th>
+                <th className="border border-solid border-stone-700 bg-stone-700 px-2 text-xl font-normal"></th>
               </tr>
             </thead>
             <tbody>
               {users.map((x) => (
                 <tr>
-                  <th className="border border-solid border-stone-300 px-2 text-xl font-normal">
+                  <th className="flex items-center justify-center border border-solid border-stone-700 py-2">
+                    <div className="h-10 w-10 overflow-hidden rounded-full">
+                      {x.pfpUrl ? (
+                        <img
+                          src={x.pfpUrl}
+                          className="flex aspect-square h-full items-center justify-center"
+                        />
+                      ) : (
+                        <span className="flex h-full items-center justify-center text-stone-500">
+                          <i className="bi-question-octagon text-xl"></i>
+                        </span>
+                      )}
+                    </div>
+                  </th>
+                  <th className="border border-solid border-stone-700 px-2 text-xl font-normal">
                     <a href={x.url} className="underline">
                       {x.name}
                     </a>
                   </th>
-                  <th className="border border-solid border-stone-300 px-2 text-xl font-normal">
+                  <th className="border border-solid border-stone-700 px-2 text-xl font-normal">
                     {x.relevance}
                   </th>
-                  <th className="border border-solid border-stone-300 px-2 text-xl font-normal">
+                  <th className="border border-solid border-stone-700 px-2 text-xl font-normal">
                     {x.parent.length != 0 ? (
                       x.parent.length == 1 ? (
                         <a href={x.parent[0].url}>{x.parent[0].name}</a>
@@ -152,13 +167,13 @@ const App = () => {
                       'Nobody'
                     )}
                   </th>
-                  <th className="border border-solid border-stone-300 px-2 text-xl font-normal">
+                  <th className="border border-solid border-stone-700 px-2 text-xl font-normal">
                     {JSON.stringify(x.checked)}
                   </th>
-                  <th className="border border-solid border-stone-300 px-2 text-xl font-normal">
+                  <th className="border border-solid border-stone-700 px-2 text-xl font-normal">
                     <button
                       disabled={x.checked}
-                      className="disabled:text-stone-300"
+                      className="disabled:text-stone-700"
                     >
                       get followers
                     </button>

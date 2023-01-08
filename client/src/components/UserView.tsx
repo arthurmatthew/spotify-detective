@@ -40,14 +40,14 @@ const UserView = ({
       <thead>
         <tr className="lowercase">
           <th className="border border-solid border-stone-800 bg-stone-800 px-2 text-xl font-normal"></th>
-          <th className="border border-solid border-stone-700 px-2 text-xl font-normal">
+          <th className="flex items-center justify-center border border-solid border-stone-700 px-2 text-xl font-normal">
             <input
               type="text"
               placeholder="name"
               className="bg-transparent text-center placeholder:text-white"
               onChange={(e) => setSearchName(e.currentTarget.value)}
             />
-            <i className="bi-search"></i>
+            <i className="bi-search flex items-center text-xs"></i>
           </th>
           <th className="border border-solid border-stone-700 px-2 text-xl font-normal">
             Relevance

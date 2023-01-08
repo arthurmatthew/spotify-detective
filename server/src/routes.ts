@@ -13,7 +13,7 @@ router.get('/followers', (req, res) => {
   console.log('Request received')
   let start = performance.now()
   followers
-    .followers(req.query.url as string)
+    .followers(req.query.url as string, JSON.parse(req.query.config as string))
     .then((users: Array<User>) => {
       res.json(users)
     })
@@ -29,7 +29,10 @@ router.get('/followers/multi', (req, res) => {
   let start = performance.now()
   try {
     followers
-      .followersMulti(JSON.parse(req.query.url as string))
+      .followersMulti(
+        JSON.parse(req.query.url as string),
+        JSON.parse(req.query.config as string)
+      )
       .then((users: Array<User>) => {
         res.json(users)
       })

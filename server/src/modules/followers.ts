@@ -1,6 +1,7 @@
 import puppeteer, { ElementHandle, Page } from 'puppeteer'
 import { JSDOM } from 'jsdom'
 import User from '../types/User'
+import Config from '../types/Config'
 
 const findFollowers = async (page: Page) => {
   return await page
@@ -39,7 +40,7 @@ const findUrl = async (data: ElementHandle<Element> | null) => {
     .then(async (x) => await x?.toString())
 }
 
-const followers = async (profileUrl: string) => {
+const followers = async (profileUrl: string, config: Config) => {
   let url = profileUrl + '/followers'
 
   let users: Array<User> = new Array()
@@ -87,7 +88,7 @@ const followers = async (profileUrl: string) => {
   return users
 }
 
-const followersMulti = async (profileUrls: Array<string>) => {
+const followersMulti = async (profileUrls: Array<string>, config: Config) => {
   // urls is array of profile urls
   let urls = profileUrls.map((x) => x + '/followers')
   let users: Array<User> = new Array()
@@ -101,6 +102,7 @@ const followersMulti = async (profileUrls: Array<string>) => {
   const page = await browser.newPage()
 
   for (const parentUrl of urls) {
+    console.log(`${urls.indexOf(parentUrl) + 1} of ${urls.length}`)
     console.log('Visiting site...')
     try {
       await page.goto(parentUrl, { waitUntil: 'networkidle0' })
@@ -111,7 +113,7 @@ const followersMulti = async (profileUrls: Array<string>) => {
 
     console.log('Searching for followers in DOM...')
     let followers = await findFollowers(page)
-    if (followers !== false) {
+    if (followers !== false && followers.length <= config.maxFollowers) {
       console.log(`Found ${followers.length} followers`)
 
       for (let i = 0; i < followers.length; i++) {
@@ -135,6 +137,8 @@ const followersMulti = async (profileUrls: Array<string>) => {
           )
         console.log(`[${i + 1}] Follower > User completed`)
       }
+    } else {
+      console.log('Followers not found or over maximum limit')
     }
   }
   await browser.close()

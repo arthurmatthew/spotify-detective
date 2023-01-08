@@ -115,7 +115,7 @@ const App = () => {
           <table className="w-screen table-fixed border-separate border-spacing-2">
             <thead>
               <tr className="lowercase">
-                <th className="border border-solid border-stone-700 bg-stone-700 px-2 text-xl font-normal"></th>
+                <th className="border border-solid border-stone-800 bg-stone-800 px-2 text-xl font-normal"></th>
                 <th className="border border-solid border-stone-700 px-2 text-xl font-normal">
                   Name
                 </th>
@@ -125,10 +125,7 @@ const App = () => {
                 <th className="border border-solid border-stone-700 px-2 text-xl font-normal">
                   Follower Of
                 </th>
-                <th className="border border-solid border-stone-700 px-2 text-xl font-normal">
-                  Checked
-                </th>
-                <th className="border border-solid border-stone-700 bg-stone-700 px-2 text-xl font-normal"></th>
+                <th className="border border-solid border-stone-800 bg-stone-800 px-2 text-xl font-normal"></th>
               </tr>
             </thead>
             <tbody>
@@ -156,7 +153,7 @@ const App = () => {
                   <th className="border border-solid border-stone-700 px-2 text-xl font-normal">
                     {x.relevance}
                   </th>
-                  <th className="border border-solid border-stone-700 px-2 text-xl font-normal">
+                  <th className="border border-solid border-stone-700 px-2 text-xl font-normal underline">
                     {x.parent.length != 0 ? (
                       x.parent.length == 1 ? (
                         <a href={x.parent[0].url}>{x.parent[0].name}</a>
@@ -167,13 +164,10 @@ const App = () => {
                       'Nobody'
                     )}
                   </th>
-                  <th className="border border-solid border-stone-700 px-2 text-xl font-normal">
-                    {JSON.stringify(x.checked)}
-                  </th>
-                  <th className="border border-solid border-stone-700 px-2 text-xl font-normal">
+                  <th className="text-xl font-normal">
                     <button
                       disabled={x.checked}
-                      className="disabled:text-stone-700"
+                      className="rounded-sm bg-stone-800 p-2 px-6 text-green-600 disabled:text-stone-700"
                     >
                       get followers
                     </button>

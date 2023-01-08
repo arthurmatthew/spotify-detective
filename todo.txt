@@ -1,9 +1,5 @@
-- add 'x to go' on server
 - server dont check duplicates
 - think about handling more logic on client side to have more feedback on frontend
-- x button on users
-- options, have an ooptions object which is sent to server
-- max followers options
 - blacklist
 - add toggles on each header of the table to sort by that specific thing
 like in spotify playlist view

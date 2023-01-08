@@ -108,7 +108,7 @@ const followersMulti = async (profileUrls: Array<string>, config: Config) => {
       await page.goto(parentUrl, { waitUntil: 'networkidle0' })
     } catch (err) {
       console.log('Invalid URL.')
-      return [new User('error', '', '')]
+      continue
     }
 
     console.log('Searching for followers in DOM...')

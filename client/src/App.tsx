@@ -43,19 +43,20 @@ const App = () => {
   */
 
   return (
-    <div>
+    <div className="min-h-screen bg-stone-900 text-white">
       <header className="flex items-center justify-center">
-        <h1 className="p-4 text-5xl font-extrabold lowercase">
+        <h1 className="p-4 text-4xl font-extrabold lowercase">
           <i className="font-black text-green-500">Spotify</i>
           Detective
         </h1>
       </header>
-      <section className="flex h-12 items-center gap-2 bg-stone-200">
+      <section className="flex h-12 items-center gap-2 bg-stone-800">
         <form className="flex gap-2 p-2" action="#">
           <input
             type="text"
             ref={inputRef}
             placeholder="open.spotify.com/user/<id>"
+            className="bg-stone-900"
           />
           <button
             className="border border-solid border-stone-400 px-2"
@@ -72,9 +73,15 @@ const App = () => {
             Get Followers
           </button>
         </form>
-        <div className="h-5/6 w-[1px] bg-stone-400"></div>
+        <div className="h-5/6 w-[1px] bg-gradient-to-t from-transparent via-stone-700 to-transparent"></div>
         <form className="flex gap-2 p-2 " action="#">
-          <input type="number" min="1" max="10" ref={timesRef} />
+          <input
+            type="number"
+            min="1"
+            max="10"
+            ref={timesRef}
+            className="bg-stone-900"
+          />
           <button
             className="border border-solid border-stone-400 px-2"
             onClick={() =>
@@ -86,7 +93,7 @@ const App = () => {
             Automate
           </button>
         </form>
-        <div className="h-5/6 w-[1px] bg-stone-400"></div>
+        <div className="h-5/6 w-[1px] bg-gradient-to-t from-transparent via-stone-700 to-transparent"></div>
         <form className="flex gap-2 p-2" action="#">
           <button
             className="border border-solid border-stone-400 px-2"
@@ -94,7 +101,7 @@ const App = () => {
           >
             Test Data
           </button>
-          <button className=" bg-red-300 px-2" onClick={() => setUsers([])}>
+          <button className=" bg-green-900 px-2" onClick={() => setUsers([])}>
             Clear
           </button>
         </form>

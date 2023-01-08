@@ -53,7 +53,8 @@ const followers = async (profileUrl: string, config: Config) => {
 
   console.log('Visiting site...')
   try {
-    await page.goto(url, { waitUntil: 'networkidle0' }) // TODO change this to wait for the followers element, maybe makes it faster
+    await page.goto(url)
+    await page.waitForSelector('section[aria-label="Followers"]')
   } catch (err) {
     console.log('Invalid URL.')
     return [new User('error', '', '')]
@@ -105,7 +106,8 @@ const followersMulti = async (profileUrls: Array<string>, config: Config) => {
     console.log(`${urls.indexOf(parentUrl) + 1} of ${urls.length}`)
     console.log('Visiting site...')
     try {
-      await page.goto(parentUrl, { waitUntil: 'networkidle0' })
+      await page.goto(parentUrl)
+      await page.waitForSelector('section[aria-label="Followers"]')
     } catch (err) {
       console.log('Invalid URL.')
       continue

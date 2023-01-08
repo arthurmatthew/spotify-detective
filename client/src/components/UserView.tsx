@@ -47,7 +47,10 @@ const UserView = ({
               className="bg-transparent text-center placeholder:text-white"
               onChange={(e) => setSearchName(e.currentTarget.value)}
             />
-            <i className="bi-search flex items-center text-xs"></i>
+            <i
+              className="bi-search flex items-center text-xs"
+              title="Type inside the textbox to the left to search."
+            ></i>
           </th>
           <th className="border border-solid border-stone-700 px-2 text-xl font-normal">
             Relevance

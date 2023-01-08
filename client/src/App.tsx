@@ -6,6 +6,22 @@ import { getFollowers, getTestFollowers } from './utils/followers'
 import Config from './types/Config'
 
 const App = () => {
+  const [show, setShow] = useState<number>(20)
+  const onScroll = () => {
+    const scrollTop = document.documentElement.scrollTop
+    const scrollHeight = document.documentElement.scrollHeight
+    const clientHeight = document.documentElement.clientHeight
+
+    if (scrollTop + clientHeight >= scrollHeight) {
+      setShow((prev) => prev + 10)
+    }
+  }
+  useEffect(() => {
+    window.addEventListener('scroll', onScroll)
+    return () => {
+      window.removeEventListener('scroll', onScroll)
+    }
+  })
   const [users, setUsers] = useState<Array<User>>(
     JSON.parse(localStorage.getItem('users') || '')
   )
@@ -163,6 +179,7 @@ const App = () => {
             </tr>
             {users
               .filter((n) => n.name.includes(searchName))
+              .slice(0, show)
               .map((x) => (
                 <tr>
                   <td className="flex items-center justify-center border border-solid border-stone-700 py-2">

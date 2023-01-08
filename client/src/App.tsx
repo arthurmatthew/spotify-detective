@@ -10,13 +10,15 @@ const App = () => {
     JSON.parse(localStorage.getItem('users') || '')
   )
 
+  const [searchName, setSearchName] = useState<string>('')
+
   const nameRef = createRef<HTMLInputElement>()
   const urlRef = createRef<HTMLInputElement>()
   const timesRef = createRef<HTMLInputElement>()
 
   const [config, setConfig] = useState<Config>({
     // CONFIG HERE
-    maxFollowers: 6,
+    maxFollowers: 100,
   })
 
   useEffect(() => {
@@ -97,6 +99,12 @@ const App = () => {
               <th className="border border-solid border-stone-800 bg-stone-800 px-2 text-xl font-normal"></th>
               <th className="border border-solid border-stone-700 px-2 text-xl font-normal">
                 Name
+                <input
+                  type="text"
+                  placeholder="Search"
+                  className="text-black"
+                  onChange={(e) => setSearchName(e.currentTarget.value)}
+                />
               </th>
               <th className="border border-solid border-stone-700 px-2 text-xl font-normal">
                 Relevance
@@ -153,69 +161,75 @@ const App = () => {
               <td className="border border-solid border-stone-700 px-2 text-xl font-normal"></td>
               <td className="border border-solid border-stone-700 px-2 text-xl font-normal"></td>
             </tr>
-            {users.map((x) => (
-              <tr>
-                <td className="flex items-center justify-center border border-solid border-stone-700 py-2">
-                  <div className="h-10 w-10 overflow-hidden rounded-full">
-                    {x.pfpUrl ? (
-                      <img
-                        src={x.pfpUrl}
-                        className="flex aspect-square h-full items-center justify-center"
-                      />
-                    ) : (
-                      <span className="flex h-full items-center justify-center text-stone-500">
-                        <i className="bi-question-octagon text-xl"></i>
-                      </span>
-                    )}
-                  </div>
-                </td>
-                <td className="border border-solid border-stone-700 px-2 text-xl font-normal">
-                  <a href={x.url} className="h-10 w-10">
-                    {x.name}
-                  </a>
-                </td>
-                <td className="border border-solid border-stone-700 px-2 text-xl font-normal">
-                  {x.relevance}
-                </td>
-                <td className="overflow-x-scroll border border-solid border-stone-700 px-2 text-xl font-normal">
-                  <ul className="flex gap-2">
-                    {x.parent.length != 0
-                      ? x.parent.map((x, i, arr) => (
-                          <li>
+            {users
+              .filter((n) => n.name.includes(searchName))
+              .map((x) => (
+                <tr>
+                  <td className="flex items-center justify-center border border-solid border-stone-700 py-2">
+                    <div className="h-10 w-10 overflow-hidden rounded-full">
+                      {x.pfpUrl ? (
+                        <img
+                          src={x.pfpUrl}
+                          className="flex aspect-square h-full items-center justify-center"
+                        />
+                      ) : (
+                        <span className="flex h-full items-center justify-center text-stone-500">
+                          <i className="bi-question-octagon text-xl"></i>
+                        </span>
+                      )}
+                    </div>
+                  </td>
+                  <td className="border border-solid border-stone-700 px-2 text-xl font-normal">
+                    <a href={x.url} className="h-10 w-10">
+                      {x.name}
+                    </a>
+                  </td>
+                  <td className="border border-solid border-stone-700 px-2 text-xl font-normal">
+                    {x.relevance}
+                  </td>
+                  <td className="overflow-x-scroll border border-solid border-stone-700 px-2 text-xl font-normal">
+                    <ul className="flex items-center gap-2">
+                      {x.parent.length != 0 ? (
+                        x.parent.map((x, i, arr) => (
+                          <li key={x} className="min-w-fit">
                             <a href={x}>
                               {users.find((i) => i.url == x)?.name || x}
                             </a>
                             {i == arr.length - 1 ? '' : ','}
                           </li>
                         ))
-                      : 'Nobody'}
-                  </ul>
-                </td>
-                <td className="border border-solid border-stone-700 text-xl text-green-300">
-                  <div className="flex">
-                    <button
-                      onClick={async () =>
-                        setUsers(await getFollowers(users, config, x.url))
-                      }
-                      className="flex-1 disabled:opacity-10"
-                      disabled={x.checked}
-                    >
-                      Get Followers
-                    </button>
-                    <button
-                      onClick={async () =>
-                        setUsers((prev) =>
-                          prev.filter((user) => user.url != x.url)
-                        )
-                      }
-                      className="flex-1 text-red-300 disabled:opacity-10"
-                    >
-                      Remove
-                    </button>
-                  </div>
-                </td>
-              </tr>
-            ))}
+                      ) : (
+                        <span className="flex h-full w-full items-center justify-center text-stone-500">
+                          <i className="bi-question-octagon text-xl"></i>
+                        </span>
+                      )}
+                    </ul>
+                  </td>
+                  <td className="border border-solid border-stone-700 text-xl text-green-300">
+                    <div className="flex">
+                      <button
+                        onClick={async () =>
+                          setUsers(await getFollowers(users, config, x.url))
+                        }
+                        className="flex-1 disabled:opacity-10"
+                        disabled={x.checked}
+                      >
+                        Get Followers
+                      </button>
+                      <button
+                        onClick={async () =>
+                          setUsers((prev) =>
+                            prev.filter((user) => user.url != x.url)
+                          )
+                        }
+                        className="flex-1 text-red-300 disabled:opacity-10"
+                      >
+                        Remove
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
           </tbody>
         </table>
       </main>

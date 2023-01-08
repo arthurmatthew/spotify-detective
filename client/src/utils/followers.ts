@@ -1,3 +1,4 @@
+import Config from '../types/Config'
 import User from '../types/User'
 
 /**
@@ -9,15 +10,20 @@ import User from '../types/User'
  * @param {string} [url] - Optional URL
  * @returns {Promise<User[]>}
  */
-export const getFollowers = async (users: Array<User>, url?: string) => {
+export const getFollowers = async (
+  users: Array<User>,
+  config: Config,
+  url?: string
+) => {
   let stateCopy: Array<User> = users
   let params = new URLSearchParams(
     url != undefined
-      ? { url: url }
+      ? { url: url, config: JSON.stringify(config) }
       : {
           url: JSON.stringify([
             ...new Set(users.filter((x) => !x.checked).map((x) => x.url)),
           ]),
+          config: JSON.stringify(config),
         }
   )
   let endpoint = `http://localhost:3000/followers${

@@ -25,14 +25,6 @@ const findName = async (data: ElementHandle<Element> | null) => {
     .then(async (x) => await x?.toString())
 }
 
-const findProfileName = async (url: string) => {
-  // Gets and parses HTML of a profile URL
-  const html = new JSDOM(await (await fetch(url)).text())
-
-  // Page has 'ExampleName on Spotify' so this just returns ExampleName
-  return html.window.document.title.split(' ')[0]
-}
-
 const findPfpUrl = async (data: ElementHandle<Element> | null) => {
   return await data
     ?.$(':scope > * img')
@@ -84,9 +76,7 @@ const followers = async (profileUrl: string) => {
       let url: string | undefined = await findUrl(data).then((x) => x?.slice(9))
       if (url !== undefined && name !== undefined)
         users.push(
-          new User(url, name, pfpUrl === undefined ? '' : pfpUrl, [
-            { name: await findProfileName(profileUrl), url: profileUrl },
-          ])
+          new User(url, name, pfpUrl === undefined ? '' : pfpUrl, [profileUrl])
         )
       console.log(`[${i + 1}] Follower > User completed`)
     }
@@ -140,10 +130,7 @@ const followersMulti = async (profileUrls: Array<string>) => {
         if (url !== undefined && name !== undefined)
           users.push(
             new User(url, name, pfpUrl === undefined ? '' : pfpUrl, [
-              {
-                name: await findProfileName(parentUrl.split('/followers')[0]),
-                url: parentUrl.split('/followers')[0],
-              },
+              parentUrl.split('/followers')[0],
             ])
           )
         console.log(`[${i + 1}] Follower > User completed`)

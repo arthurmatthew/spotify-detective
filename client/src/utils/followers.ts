@@ -68,7 +68,7 @@ export const toRelevanceModel = (users: Array<User>): User[] => {
   result.map((x) => (x.relevance = counts.get(x.url))) // Adds relevance property
 
   // Combine all parents
-  let uniqueParent = new Map<string, { name: string; url: string }[]>()
+  let uniqueParent = new Map<string, string[]>()
   for (let user of result) {
     let parents = uniqueParent.get(user.url)
     uniqueParent.set(

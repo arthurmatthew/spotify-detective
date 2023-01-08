@@ -153,30 +153,22 @@ const App = () => {
                   <th className="border border-solid border-stone-700 px-2 text-xl font-normal">
                     {x.relevance}
                   </th>
-                  <th className="scrollbar-hide overflow-x-scroll border border-solid border-stone-700 px-2 text-xl font-normal">
-                    {x.parent.length != 0 ? (
-                      x.parent.length == 1 ? (
-                        <a href={x.parent[0].url}>{x.parent[0].name}</a>
-                      ) : (
-                        <ul className="flex gap-4">
-                          {x.parent.map((x) => (
-                            <li>
-                              <a href={x.url} className="underline">
-                                {x.name}
-                              </a>
-                              ,
-                            </li>
-                          ))}
-                        </ul>
-                      )
-                    ) : (
-                      'Nobody'
-                    )}
+                  <th className="overflow-x-scroll border border-solid border-stone-700 px-2 text-xl font-normal">
+                    <ul className="flex gap-2">
+                      {x.parent.map((x, i, arr) => (
+                        <li>
+                          <a href={x}>
+                            {users.find((i) => i.url == x)?.name || x}
+                          </a>
+                          {i == arr.length - 1 ? '' : ','}
+                        </li>
+                      ))}
+                    </ul>
                   </th>
-                  <th className="text-xl font-normal">
+                  <th className="border border-solid border-stone-700 text-xl font-normal">
                     <button
                       disabled={x.checked}
-                      className="rounded-sm bg-stone-800 p-2 px-6 text-green-600 disabled:text-stone-700"
+                      className="rounded-sm border border-solid border-stone-700 p-2 px-6 text-green-600 disabled:text-stone-700"
                       onClick={async () =>
                         setUsers(await getFollowers(users, x.url))
                       }
@@ -214,8 +206,8 @@ const UserDisplay = ({
       <ul>
         <h3>Follower Of:</h3>
         {user.parent.map((x) => (
-          <li key={x.url}>
-            <a href={x.url}>{x.name}</a>
+          <li key={x}>
+            <a href={x}>{x}</a>
           </li>
         ))}
       </ul>

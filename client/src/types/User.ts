@@ -3,14 +3,14 @@ export default class User {
   name: string
   pfpUrl: string
   relevance: string
-  parent: { name: string; url: string }[]
+  parent: string[]
   checked: boolean
   constructor(
     url: string,
     name: string,
     pfpUrl: string,
     relevance: string,
-    parent: { name: string; url: string }[],
+    parent: string[],
     checked: boolean
   ) {
     this.url = url

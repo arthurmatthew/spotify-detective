@@ -6,10 +6,12 @@ import { getFollowers, getTestFollowers } from '../utils/followers'
 const Controls = ({
   users,
   setUsers,
+  show,
   config,
 }: {
   users: User[]
   setUsers: (array: React.SetStateAction<User[]>) => void
+  show: number
   config: Config
 }) => {
   const timesRef = createRef<HTMLInputElement>()
@@ -55,6 +57,12 @@ const Controls = ({
         </Button>
         <Button onClick={() => setUsers([])}>Clear</Button>
       </form>
+      <Divider />
+      <article>
+        <p>
+          {users.length} users, showing {show}
+        </p>
+      </article>
     </section>
   )
 }

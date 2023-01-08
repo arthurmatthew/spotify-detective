@@ -20,6 +20,9 @@ const App = () => {
     localStorage.setItem('users', JSON.stringify(users))
   }, [users])
 
+  // Infinite scroll
+  const [show, setShow] = useState<number>(20)
+
   return (
     <div className="min-h-screen bg-stone-900 text-white">
       <header className="flex items-center justify-center">
@@ -28,9 +31,15 @@ const App = () => {
           Detective
         </h1>
       </header>
-      <Controls users={users} setUsers={setUsers} config={config} />
+      <Controls users={users} setUsers={setUsers} config={config} show={show} />
       <main>
-        <UserView users={users} setUsers={setUsers} config={config} />
+        <UserView
+          users={users}
+          setUsers={setUsers}
+          config={config}
+          show={show}
+          setShow={setShow}
+        />
       </main>
     </div>
   )

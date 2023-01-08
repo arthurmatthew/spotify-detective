@@ -6,14 +6,17 @@ import { getFollowers } from '../utils/followers'
 const UserView = ({
   users,
   setUsers,
+  show,
+  setShow,
   config,
 }: {
   users: User[]
   setUsers: (array: React.SetStateAction<User[]>) => void
+  show: number
+  setShow: (number: React.SetStateAction<number>) => void
   config: Config
 }) => {
   const [searchName, setSearchName] = useState<string>('')
-  const [show, setShow] = useState<number>(20)
 
   const nameRef = createRef<HTMLInputElement>()
   const urlRef = createRef<HTMLInputElement>()
@@ -31,7 +34,7 @@ const UserView = ({
     const clientHeight = document.documentElement.clientHeight
 
     if (scrollTop + clientHeight >= scrollHeight) {
-      setShow((prev) => prev + 10)
+      show < users.length ? setShow((prev) => prev + 10) : setShow(users.length)
     }
   }
 
@@ -107,76 +110,87 @@ const UserView = ({
           <td className="border border-solid border-stone-700 px-2 text-xl font-normal"></td>
           <td className="border border-solid border-stone-700 px-2 text-xl font-normal"></td>
         </tr>
-        {users
-          .filter((n) => n.name.includes(searchName))
-          .slice(0, show)
-          .map((x) => (
-            <tr>
-              <td className="flex items-center justify-center border border-solid border-stone-700 py-2">
-                <div className="h-10 w-10 overflow-hidden rounded-full">
-                  {x.pfpUrl ? (
-                    <img
-                      src={x.pfpUrl}
-                      className="flex aspect-square h-full items-center justify-center"
-                    />
-                  ) : (
-                    <span className="flex h-full items-center justify-center text-stone-500">
-                      <i className="bi-question-octagon text-xl"></i>
-                    </span>
-                  )}
-                </div>
-              </td>
-              <td className="border border-solid border-stone-700 px-2 text-xl font-normal">
-                <a href={x.url} className="h-10 w-10">
-                  {x.name}
-                </a>
-              </td>
-              <td className="border border-solid border-stone-700 px-2 text-xl font-normal">
-                {x.relevance}
-              </td>
-              <td className="overflow-x-scroll border border-solid border-stone-700 px-2 text-xl font-normal">
-                <ul className="flex items-center gap-2">
-                  {x.parent.length != 0 ? (
-                    x.parent.map((x, i, arr) => (
-                      <li key={x} className="min-w-fit">
-                        <a href={x}>
-                          {users.find((i) => i.url == x)?.name || x}
-                        </a>
-                        {i == arr.length - 1 ? '' : ','}
-                      </li>
-                    ))
-                  ) : (
-                    <span className="flex h-full w-full items-center justify-center text-stone-500">
-                      <i className="bi-question-octagon text-xl"></i>
-                    </span>
-                  )}
-                </ul>
-              </td>
-              <td className="border border-solid border-stone-700 text-xl text-green-300">
-                <div className="flex">
-                  <button
-                    onClick={async () =>
-                      setUsers(await getFollowers(users, config, x.url))
-                    }
-                    className="flex-1 disabled:opacity-10"
-                    disabled={x.checked}
-                  >
-                    Get Followers
-                  </button>
-                  <button
-                    onClick={async () =>
-                      setUsers((prev) =>
-                        prev.filter((user) => user.url != x.url)
-                      )
-                    }
-                    className="flex-1 text-red-300 disabled:opacity-10"
-                  >
-                    Remove
-                  </button>
-                </div>
-              </td>
-            </tr>
-          ))}
+        {users.length != 0 ? (
+          users
+            .filter((n) => n.name.includes(searchName))
+            .slice(0, show)
+            .map((x) => (
+              <tr>
+                <td className="flex items-center justify-center border border-solid border-stone-700 py-2">
+                  <div className="h-10 w-10 overflow-hidden rounded-full">
+                    {x.pfpUrl ? (
+                      <img
+                        src={x.pfpUrl}
+                        className="flex aspect-square h-full items-center justify-center"
+                      />
+                    ) : (
+                      <span className="flex h-full items-center justify-center text-stone-500">
+                        <i className="bi-question-octagon text-xl"></i>
+                      </span>
+                    )}
+                  </div>
+                </td>
+                <td className="border border-solid border-stone-700 px-2 text-xl font-normal">
+                  <a href={x.url} className="h-10 w-10">
+                    {x.name}
+                  </a>
+                </td>
+                <td className="border border-solid border-stone-700 px-2 text-xl font-normal">
+                  {x.relevance}
+                </td>
+                <td className="overflow-x-scroll border border-solid border-stone-700 px-2 text-xl font-normal">
+                  <ul className="flex items-center gap-2">
+                    {x.parent.length != 0 ? (
+                      x.parent.map((x, i, arr) => (
+                        <li key={x} className="min-w-fit">
+                          <a href={x}>
+                            {users.find((i) => i.url == x)?.name || x}
+                          </a>
+                          {i == arr.length - 1 ? '' : ','}
+                        </li>
+                      ))
+                    ) : (
+                      <span className="flex h-full w-full items-center justify-center text-stone-500">
+                        <i className="bi-question-octagon text-xl"></i>
+                      </span>
+                    )}
+                  </ul>
+                </td>
+                <td className="border border-solid border-stone-700 text-xl text-green-300">
+                  <div className="flex">
+                    <button
+                      onClick={async () =>
+                        setUsers(await getFollowers(users, config, x.url))
+                      }
+                      className="flex-1 disabled:opacity-10"
+                      disabled={x.checked}
+                    >
+                      Get Followers
+                    </button>
+                    <button
+                      onClick={async () =>
+                        setUsers((prev) =>
+                          prev.filter((user) => user.url != x.url)
+                        )
+                      }
+                      className="flex-1 text-red-300 disabled:opacity-10"
+                    >
+                      Remove
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            ))
+        ) : (
+          <>
+            <td></td>
+            <td>
+              <h3 className="text-center">
+                Add a user in the box above to start.
+              </h3>
+            </td>
+          </>
+        )}
       </tbody>
     </table>
   )

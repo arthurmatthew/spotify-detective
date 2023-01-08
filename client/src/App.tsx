@@ -1,11 +1,8 @@
 import { createRef, useState } from 'react'
 import User from './types/User'
+import 'reactflow/dist/style.css'
 
-import {
-  getFollowers,
-  getTestFollowers,
-  toRelevanceModel,
-} from './utils/followers'
+import { getFollowers, getTestFollowers } from './utils/followers'
 
 const App = () => {
   const [users, setUsers] = useState<Array<User>>([])
@@ -82,18 +79,10 @@ const App = () => {
             </button>
             <p>Warning: This might take a long time!</p>
           </fieldset>
-
           <ul className="flex flex-col gap-2">
             {users.length > 0 ? (
-              toRelevanceModel(users).map((x) => (
-                <UserDisplay
-                  name={x.name}
-                  url={x.url}
-                  relevance={x.relevance}
-                  checked={x.checked}
-                  setUsers={setUsers}
-                  users={users}
-                />
+              users.map((x) => (
+                <UserDisplay user={x} setUsers={setUsers} users={users} />
               ))
             ) : (
               <h1>Press Get Followers to get started</h1>
@@ -106,33 +95,33 @@ const App = () => {
 }
 
 const UserDisplay = ({
+  user,
   users,
   setUsers,
-  name,
-  url,
-  relevance,
-  checked,
-  pfp,
 }: {
+  user: User
   users: Array<User>
   setUsers: (array: React.SetStateAction<User[]>) => void
-  name: string
-  url: string
-  relevance: string
-  checked: boolean
-  pfp?: string
 }) => {
   return (
-    <li key={url} className="flex gap-2 bg-stone-100 w-fit py-2 px-3">
+    <li key={user.url} className="flex gap-2 bg-stone-100 w-fit py-2 px-3">
       <h1>
-        <a href={url} target="_blank">
-          {name}
+        <a href={user.url} target="_blank">
+          {user.name}
         </a>
       </h1>
-      <h2>Relevance: {relevance}</h2>
+      <h2>Relevance: {user.relevance}</h2>
+      <ul>
+        <h3>Follower Of:</h3>
+        {user.parent.map((x) => (
+          <li>
+            <a href={x.url}>{x.name}</a>
+          </li>
+        ))}
+      </ul>
       <button
-        disabled={checked}
-        onClick={async () => setUsers(await getFollowers(users, url))}
+        disabled={user.checked}
+        onClick={async () => setUsers(await getFollowers(users, user.url))}
       >
         Get Followers
       </button>

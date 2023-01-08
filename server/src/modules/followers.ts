@@ -1,4 +1,5 @@
 import puppeteer, { ElementHandle, Page } from 'puppeteer'
+import { JSDOM } from 'jsdom'
 import User from '../types/User'
 
 const findFollowers = async (page: Page) => {
@@ -22,6 +23,14 @@ const findName = async (data: ElementHandle<Element> | null) => {
     ?.$(':scope > * a')
     .then(async (x) => await x?.getProperty('title'))
     .then(async (x) => await x?.toString())
+}
+
+const findProfileName = async (url: string) => {
+  // Gets and parses HTML of a profile URL
+  const html = new JSDOM(await (await fetch(url)).text())
+
+  // Page has 'ExampleName on Spotify' so this just returns ExampleName
+  return html.window.document.title.split(' ')[0]
 }
 
 const findPfpUrl = async (data: ElementHandle<Element> | null) => {
@@ -69,7 +78,11 @@ const followers = async (profileUrl: string) => {
       ) // Slice 9 to remove JSHandle: text
       let url: string | undefined = await findUrl(data).then((x) => x?.slice(9))
       if (url !== undefined && name !== undefined)
-        users.push(new User(url, name, pfpUrl === undefined ? '' : pfpUrl))
+        users.push(
+          new User(url, name, pfpUrl === undefined ? '' : pfpUrl, [
+            { name: await findProfileName(profileUrl), url: profileUrl },
+          ])
+        )
       console.log(`[${i + 1}] Follower > User completed`)
     }
   }
@@ -92,10 +105,10 @@ const followersMulti = async (profileUrls: Array<string>) => {
   console.log('Creating page...')
   const page = await browser.newPage()
 
-  for (const url of urls) {
+  for (const parentUrl of urls) {
     console.log('Visiting site...')
     try {
-      await page.goto(url, { waitUntil: 'networkidle0' })
+      await page.goto(parentUrl, { waitUntil: 'networkidle0' })
     } catch (err) {
       console.log('Invalid URL.')
       return [new User('error', '', '')]
@@ -118,7 +131,14 @@ const followersMulti = async (profileUrls: Array<string>) => {
           x?.slice(9)
         )
         if (url !== undefined && name !== undefined)
-          users.push(new User(url, name, pfpUrl === undefined ? '' : pfpUrl))
+          users.push(
+            new User(url, name, pfpUrl === undefined ? '' : pfpUrl, [
+              {
+                name: await findProfileName(parentUrl.split('/followers')[0]),
+                url: parentUrl.split('/followers')[0],
+              },
+            ])
+          )
         console.log(`[${i + 1}] Follower > User completed`)
       }
     }

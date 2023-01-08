@@ -28,17 +28,19 @@ export const getFollowers = async (users: Array<User>, url?: string) => {
 
   url != undefined
     ? (stateCopy = stateCopy.map((x) =>
-        x.url == url ? new User(x.url, x.name, x.pfpUrl, x.relevance, true) : x
+        x.url == url
+          ? new User(x.url, x.name, x.pfpUrl, x.relevance, x.parent, true)
+          : x
       ))
     : (stateCopy = stateCopy.map(
-        (x) => new User(x.url, x.name, x.pfpUrl, x.relevance, true)
+        (x) => new User(x.url, x.name, x.pfpUrl, x.relevance, x.parent, true)
       ))
 
   const json = await newUsers.json() // array of all followers of every user in array
 
   stateCopy = [...stateCopy, ...json].filter((x: User) => !(x.url == 'error'))
 
-  return stateCopy
+  return toRelevanceModel(stateCopy)
 }
 
 /**
@@ -48,7 +50,7 @@ export const getFollowers = async (users: Array<User>, url?: string) => {
 export const getTestFollowers = async (): Promise<User[]> => {
   const users = await fetch('http://localhost:3000/test')
   const json: Array<User> = await users.json()
-  return json.filter((x: User) => !(x.url == 'error'))
+  return toRelevanceModel(json.filter((x: User) => !(x.url == 'error')))
 }
 
 /**
@@ -65,10 +67,23 @@ export const toRelevanceModel = (users: Array<User>): User[] => {
 
   result.map((x) => (x.relevance = counts.get(x.url))) // Adds relevance property
 
-  let unique = new Map()
+  // Combine all parents
+  let uniqueParent = new Map<string, { name: string; url: string }[]>()
   for (let user of result) {
-    if (unique.get(user.url) == false || unique.get(user.url) == undefined) {
-      unique.set(user.url, user.checked)
+    let parents = uniqueParent.get(user.url)
+    uniqueParent.set(
+      user.url,
+      parents != undefined ? [...parents, ...user.parent] : user.parent
+    )
+  }
+
+  let uniqueCheck = new Map<string, boolean>()
+  for (let user of result) {
+    if (
+      uniqueCheck.get(user.url) == false ||
+      uniqueCheck.get(user.url) == undefined
+    ) {
+      uniqueCheck.set(user.url, user.checked)
     }
   }
 
@@ -76,10 +91,18 @@ export const toRelevanceModel = (users: Array<User>): User[] => {
   return [
     ...new Map(
       result
-        .map(
-          (x) =>
-            new User(x.url, x.name, x.pfpUrl, x.relevance, unique.get(x.url))
-        )
+        .map((x) => {
+          let parent = uniqueParent.get(x.url)
+          let check = uniqueCheck.get(x.url)
+          return new User(
+            x.url,
+            x.name,
+            x.pfpUrl,
+            x.relevance,
+            parent == undefined ? x.parent : parent,
+            check == undefined ? x.checked : check
+          )
+        })
         .map((x) => [x.url, x])
     ).values(),
   ].sort(

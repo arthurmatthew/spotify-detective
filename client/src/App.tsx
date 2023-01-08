@@ -130,7 +130,7 @@ const App = () => {
             </thead>
             <tbody>
               {users.map((x) => (
-                <tr>
+                <tr className="">
                   <th className="flex items-center justify-center border border-solid border-stone-700 py-2">
                     <div className="h-10 w-10 overflow-hidden rounded-full">
                       {x.pfpUrl ? (
@@ -146,19 +146,28 @@ const App = () => {
                     </div>
                   </th>
                   <th className="border border-solid border-stone-700 px-2 text-xl font-normal">
-                    <a href={x.url} className="underline">
+                    <a href={x.url} className="h-10 w-10">
                       {x.name}
                     </a>
                   </th>
                   <th className="border border-solid border-stone-700 px-2 text-xl font-normal">
                     {x.relevance}
                   </th>
-                  <th className="border border-solid border-stone-700 px-2 text-xl font-normal underline">
+                  <th className="scrollbar-hide overflow-x-scroll border border-solid border-stone-700 px-2 text-xl font-normal">
                     {x.parent.length != 0 ? (
                       x.parent.length == 1 ? (
                         <a href={x.parent[0].url}>{x.parent[0].name}</a>
                       ) : (
-                        <CollapseList users={x.parent} />
+                        <ul className="flex gap-4">
+                          {x.parent.map((x) => (
+                            <li>
+                              <a href={x.url} className="underline">
+                                {x.name}
+                              </a>
+                              ,
+                            </li>
+                          ))}
+                        </ul>
                       )
                     ) : (
                       'Nobody'
@@ -168,6 +177,9 @@ const App = () => {
                     <button
                       disabled={x.checked}
                       className="rounded-sm bg-stone-800 p-2 px-6 text-green-600 disabled:text-stone-700"
+                      onClick={async () =>
+                        setUsers(await getFollowers(users, x.url))
+                      }
                     >
                       get followers
                     </button>
@@ -179,37 +191,6 @@ const App = () => {
         )}
       </main>
     </div>
-  )
-}
-
-const CollapseList = ({
-  users,
-}: {
-  users: { name: string; url: string }[]
-}) => {
-  const [collapsed, setCollapsed] = useState(true)
-
-  return (
-    <ul>
-      {collapsed ? (
-        <i
-          className="bi-caret-right-fill text-sm text-black"
-          onClick={() => setCollapsed((prev) => !prev)}
-        ></i>
-      ) : (
-        <>
-          <i
-            className="bi-caret-down-fill text-sm text-black"
-            onClick={() => setCollapsed((prev) => !prev)}
-          ></i>
-          {users.map((x) => (
-            <li key={x.url}>
-              <a href={x.url}>{x.name}</a>
-            </li>
-          ))}
-        </>
-      )}
-    </ul>
   )
 }
 

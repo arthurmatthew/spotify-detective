@@ -4,3 +4,4 @@
 - add toggles on each header of the table to sort by that specific thing
 like in spotify playlist view
 - add settings to skip people over max limit or get their first x followers then skip
+- add setting to wait for network idle rather than follower section

@@ -50,7 +50,7 @@ const App = () => {
           Detective
         </h1>
       </header>
-      <section className="flex h-12 items-center gap-2 bg-stone-800">
+      <section className="flex h-12 items-center gap-2 border-b border-t border-solid border-stone-800">
         <form className="flex gap-2 p-2" action="#">
           <input
             type="text"

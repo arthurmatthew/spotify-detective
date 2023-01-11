@@ -38,6 +38,24 @@ const UserView = ({
     }
   }
 
+  const clear = (to?: User) => {
+    setUsers((prev) =>
+      to == undefined
+        ? [
+            ...prev,
+            new User(
+              urlRef.current?.value || '',
+              nameRef.current?.value || '',
+              '',
+              '0',
+              [],
+              false
+            ),
+          ]
+        : [to]
+    )
+  }
+
   return (
     <table className="w-screen table-fixed">
       <thead>
@@ -111,7 +129,7 @@ const UserView = ({
             .filter((n) => n.name.includes(searchName))
             .slice(0, show)
             .map((x) => (
-              <tr className="border-b border-solid border-stone-700 last:border-0">
+              <tr className="border-b border-solid border-stone-800 last:border-0">
                 <td className="flex items-center justify-end py-2">
                   <div className="h-10 w-10 overflow-hidden rounded-full">
                     {x.pfpUrl ? (
@@ -170,6 +188,12 @@ const UserView = ({
                       className="flex-1 text-red-300 disabled:opacity-10"
                     >
                       Remove
+                    </button>
+                    <button
+                      onClick={() => clear(x)}
+                      className="flex-1 text-white disabled:opacity-10"
+                    >
+                      Clear To
                     </button>
                   </div>
                 </td>

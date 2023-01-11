@@ -5,3 +5,6 @@
 like in spotify playlist view
 - add settings to skip people over max limit or get their first x followers then skip
 - add setting to wait for network idle rather than follower section
+- add selection system, select multiple users and be able to remove them, clear to multiple, get followers of them, etc
+- maybe make info changable, people might want to rename users or something
+- pin certain users
